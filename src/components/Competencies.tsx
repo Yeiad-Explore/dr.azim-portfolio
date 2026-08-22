@@ -3,14 +3,14 @@
 
 const COMPETENCIES = [
   {
-    code: 'CAR-01',
-    title: 'Acute Cardiac Emergencies',
-    desc: 'ACS (STEMI/NSTEMI), acute arrhythmias, defibrillation, and cardiac arrest resuscitation protocols.',
-  },
-  {
-    code: 'TRM-02',
+    code: 'TRM-01',
     title: 'Trauma & Emergency Airway',
     desc: 'Polytrauma stabilization, emergency airway management, and adherence to ATLS/ACLS guidelines.',
+  },
+  {
+    code: 'RES-02',
+    title: 'ER Floor & Intensive Care',
+    desc: '24/7 triage supervision, rapid resuscitation, and coordinated emergency transfer to the Cath Lab and CCU.',
   },
   {
     code: 'TEL-03',
@@ -18,9 +18,9 @@ const COMPETENCIES = [
     desc: 'Rapid bedside ECG interpretation during the critical golden hour and continuous hemodynamic monitoring.',
   },
   {
-    code: 'CCU-04',
-    title: 'ER Floor & Intensive Care',
-    desc: '24/7 triage supervision, rapid resuscitation, and coordinated emergency transfer to the Cath Lab and CCU.',
+    code: 'CAR-04',
+    title: 'Acute Cardiac Emergencies',
+    desc: 'Rapid recognition and stabilization of ACS (STEMI/NSTEMI), arrhythmia management, defibrillation, and cardiac arrest resuscitation.',
   },
 ]
 

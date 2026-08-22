@@ -25,7 +25,9 @@ Chapter label: PRACTICE
 
 **On the emergency floor.**
 
-Cases at Labaid Cardiac Hospital arrive mid-heart-attack, not mid-checkup. Dr. Abdul Awal Bhuiyan works acute cardiac and trauma emergencies, resuscitation, and critical care.
+Cases at Labaid Cardiac Hospital arrive mid-crisis, not mid-checkup. Dr. Abdul Awal Bhuiyan works critical medical emergencies and trauma, resuscitation, and critical care.
+
+Note for the builder: he is an emergency physician, not a cardiologist. Copy should lead with resuscitation, triage, and stabilization — cardiac cases are one category of emergency he handles, not his specialty. Never phrase his work as if he performs cardiology procedures (e.g. angioplasty, stenting) himself.
 
 Two and a half years at Unity Aid Hospital first. Labaid Cardiac Hospital from September 2025.
 

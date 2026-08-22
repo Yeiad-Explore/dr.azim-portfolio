@@ -82,8 +82,8 @@ const MILESTONES: CaseMilestone[] = [
       spo2: '99%',
       ecg: 'Transfer monitor active',
     },
-    findings: 'Patient escorted directly by Dr. Bhuiyan from the ER bay into the adjacent Cath Lab without floor delays. 100% proximal LAD occlusion identified.',
-    action: 'Successful coronary wire cross and balloon angioplasty with drug-eluting stent (DES) placement. Door-to-Balloon time: 48 minutes total (Target <90m).',
+    findings: 'Patient escorted directly by Dr. Bhuiyan from the ER bay into the adjacent Cath Lab without floor delays. 100% proximal LAD occlusion identified by the interventional team.',
+    action: 'Handover complete; the interventional cardiology team proceeds with coronary wire cross and stent placement. Door-to-Balloon time: 48 minutes total (Target <90m).',
     protocol: 'Myocardial Salvage & Golden Hour Success',
   },
 ]

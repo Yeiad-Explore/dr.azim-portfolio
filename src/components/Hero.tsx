@@ -24,7 +24,7 @@ export function Hero() {
           <div data-hero-line className="mb-4">
             <span className="inline-flex items-center gap-2 rounded-[4px] border border-border-strong bg-bg-well px-3 py-1 font-mono text-[0.6875rem] font-medium tracking-[0.14em] text-accent-deep">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
-              EMERGENCY MEDICINE &amp; ACUTE CARDIAC CARE
+              EMERGENCY MEDICINE &amp; CRITICAL CARE
             </span>
           </div>
 
@@ -45,7 +45,7 @@ export function Hero() {
           </p>
 
           <p data-hero-line className="mt-6 max-w-[48ch] text-[1.0625rem] leading-[1.7] text-ink-secondary">
-            The kind of doctor you meet on the worst day of your life, and are glad you did. Acute triage, rapid cardiac intervention, and emergency stabilization, on the emergency floor in Dhaka.
+            The kind of doctor you meet on the worst day of your life, and are glad you did. Acute triage, rapid resuscitation, and emergency stabilization, on the emergency floor in Dhaka.
           </p>
 
           <div

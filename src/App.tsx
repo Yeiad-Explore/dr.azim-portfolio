@@ -37,9 +37,9 @@ function App() {
         >
           <div className="max-w-[65ch] space-y-4">
             <p>
-              Cases at Labaid Cardiac Hospital arrive mid-heart-attack, not
-              mid-checkup. Dr. Abdul Awal Bhuiyan manages acute cardiac crises,
-              trauma emergencies, bedside resuscitation, and immediate intensive care.
+              Cases at Labaid Cardiac Hospital arrive mid-crisis, not
+              mid-checkup. Dr. Abdul Awal Bhuiyan manages critical medical emergencies,
+              trauma, bedside resuscitation, and immediate intensive care.
             </p>
             <p>
               Trained across high-volume emergency floors in Dhaka, providing rapid clinical decision-making during the critical golden hour.
