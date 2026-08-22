@@ -5,9 +5,12 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <a
             href="#"
-            className="font-medium tracking-tight text-ink transition-colors duration-[160ms] hover:text-accent-deep"
+            className="font-medium tracking-tight whitespace-nowrap text-ink transition-colors duration-[160ms] hover:text-accent-deep"
           >
-            Dr. Abdul Awal Bhuiyan, <span className="text-ink-secondary text-xs font-normal">MBBS</span>
+            {/* the full name overruns the 14px bar at 360px — initials below sm */}
+            <span className="sm:hidden">Dr. A. A. Bhuiyan</span>
+            <span className="hidden sm:inline">Dr. Abdul Awal Bhuiyan,</span>{' '}
+            <span className="text-xs font-normal text-ink-secondary">MBBS</span>
           </a>
           <span className="hidden h-3 w-px bg-border sm:inline-block" aria-hidden="true" />
           <div className="hidden items-center gap-1.5 font-mono text-[0.75rem] text-ink-secondary md:flex">

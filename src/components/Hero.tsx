@@ -1,4 +1,5 @@
 import { EcgTrace } from './EcgTrace'
+import { Portrait } from './Portrait'
 
 export function Hero() {
   return (
@@ -7,12 +8,12 @@ export function Hero() {
         <EcgTrace index={0} variant="h" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-5 md:grid md:min-h-svh md:grid-cols-[4rem_1fr] md:px-8">
+      <div className="mx-auto max-w-6xl px-5 md:grid md:min-h-svh md:grid-cols-[4rem_1fr] md:px-8 lg:grid-cols-[4rem_minmax(0,1fr)_21rem]">
         <div className="relative hidden md:block" aria-hidden="true">
           <EcgTrace index={0} variant="v" />
         </div>
 
-        <div className="flex min-h-[88svh] flex-col justify-center py-16 md:min-h-0 md:py-20 md:pl-14 lg:pl-20">
+        <div className="flex min-h-[88svh] flex-col justify-center py-16 md:min-h-0 md:py-20 md:pl-14 lg:pl-16">
           <p
             className="mb-6 font-mono text-[0.8125rem] tracking-[0.2em] text-ink-secondary"
             aria-hidden="true"
@@ -44,7 +45,7 @@ export function Hero() {
           </p>
 
           <p data-hero-line className="mt-6 max-w-[48ch] text-[1.0625rem] leading-[1.7] text-ink-secondary">
-            The kind of doctor you meet on the worst day of your life, and are glad you did. Dedicated to acute triage, rapid cardiac intervention, and emergency stabilization in Dhaka.
+            The kind of doctor you meet on the worst day of your life, and are glad you did. Acute triage, rapid cardiac intervention, and emergency stabilization, on the emergency floor in Dhaka.
           </p>
 
           <div
@@ -79,6 +80,15 @@ export function Hero() {
               Direct Handover / Contact
             </a>
           </div>
+        </div>
+
+        {/* lg: portrait takes the third column beside the copy.
+            Below lg it falls to its own row under the CTAs. */}
+        <div
+          data-hero-line
+          className="max-w-[17rem] pb-16 md:col-span-2 md:col-start-2 md:pb-20 md:pl-14 lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:max-w-none lg:self-center lg:pb-0 lg:pl-10"
+        >
+          <Portrait />
         </div>
       </div>
     </section>

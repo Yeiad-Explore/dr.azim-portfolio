@@ -34,6 +34,22 @@ Two and a half years at Unity Aid Hospital first. Labaid Cardiac Hospital from S
 
 ---
 
+## 1.5 · Circulation — 22:26 · The heart band
+
+No chapter numeral — this beat carries the WebGL set-piece, not a chapter.
+
+Chapter label: CIRCULATION
+
+**The organ the whole shift is organized around.**
+
+Every beat below the trace is a contraction. In an arrest, the job is to buy back the ones the patient can no longer make.
+
+[mono] SCHEMATIC · NOT A DIAGNOSTIC IMAGE
+
+The caption is not decoration. The model is a generated schematic, not imaging, and a physician's site must not imply otherwise.
+
+---
+
 ## 2 · Chart — 22:40 · Registration
 
 Chapter label: CHART
@@ -76,4 +92,5 @@ School history, internship, short courses, exams in preparation, and referee nam
 
 - Never call him "Azim bhaia" on the site — that's the file name, not his name.
 - Phone/email/IDs must match exactly what's above.
-- No stock photos, no stethoscope clip-art. If imagery is wanted later, leave a slot; ship type-only now.
+- No stock photos, no stethoscope clip-art. His own portrait runs in the hero (`public/img/portrait-*.webp`, warm-mono treated); any further imagery must likewise be his, not stock.
+- Portrait alt text describes what is in the frame and claims no location — the photo's setting is not a fact on file.

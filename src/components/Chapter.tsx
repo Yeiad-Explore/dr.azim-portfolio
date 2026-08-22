@@ -2,34 +2,42 @@ import type { ReactNode } from 'react'
 import { EcgTrace } from './EcgTrace'
 
 interface ChapterProps {
-  index: number // 1–3, drives the ghost numeral and trace segment
+  index: number // 1–3, the ghost numeral the reader sees
+  // Which segment of the page-long trace this section carries. Distinct from
+  // `index` because the heart band takes a beat without taking a numeral.
+  beatIndex: number
   id: string
   time: string // shift-clock beat, e.g. "21:52" (decorative)
   beat: string // chapter label, e.g. "TRIAGE"
   title: string
   wide?: boolean // drop the 65ch measure for table / two-column content
+  invert?: boolean // the page's one dark passage — see .band-ink in tokens.css
   children: ReactNode
 }
 
-export function Chapter({ index, id, time, beat, title, wide, children }: ChapterProps) {
+export function Chapter({ index, beatIndex, id, time, beat, title, wide, invert, children }: ChapterProps) {
   const numeral = String(index).padStart(2, '0')
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      data-beat={index}
+      data-beat={beatIndex}
       data-time={time}
-      className="relative border-t border-border"
+      className={
+        invert
+          ? 'band-ink relative'
+          : 'relative border-t border-border'
+      }
     >
       {/* mobile: trace collapses to a thin rule at the top of the section */}
       <div className="relative h-12 border-b border-border md:hidden" aria-hidden="true">
-        <EcgTrace index={index} variant="h" />
+        <EcgTrace index={beatIndex} variant="h" />
       </div>
 
       <div className="mx-auto max-w-6xl px-5 md:grid md:grid-cols-[4rem_1fr] md:px-8">
         {/* desktop: reserved trace gutter, full section height */}
         <div className="relative hidden md:block" aria-hidden="true">
-          <EcgTrace index={index} variant="v" />
+          <EcgTrace index={beatIndex} variant="v" />
         </div>
 
         <div className="relative py-20 md:py-32 md:pl-14 lg:pl-20">

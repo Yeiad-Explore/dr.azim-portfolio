@@ -49,8 +49,10 @@ type Builder = (cmds: Cmd[]) => void
 
 // Section 0 — hero: flatline, one beat near the end, flat out.
 // Section 1 — practice (the floor): sharper complexes with a VT-like burst.
-// Section 2 — chart: settling sinus.
-// Section 3 — handover: steady rhythm.
+// Section 2 — heart band: the burst resolves into a slow, deliberate rhythm.
+//             Its four R waves are what the WebGL heart contracts on.
+// Section 3 — chart: settling sinus.
+// Section 4 — handover: steady rhythm.
 const SECTIONS: Builder[] = [
   (c) => {
     flat(0, 700, c)
@@ -64,6 +66,11 @@ const SECTIONS: Builder[] = [
     beat(630, 180, 28, c)
     beat(810, 170, 26, c)
     flat(980, 20, c)
+  },
+  (c) => {
+    flat(0, 90, c)
+    const e = sinusRun(90, 4, 200, 30, c)
+    flat(e, 1000 - e, c)
   },
   (c) => {
     flat(0, 50, c)
@@ -92,6 +99,10 @@ function serialize(cmds: Cmd[], map: (along: number, deflect: number) => [number
     })
     .join(' ')
 }
+
+// R-wave positions (0–1 along section 2), derived from the same numbers that
+// draw it, so the WebGL heart contracts on exactly the spikes you can see.
+export const HEART_BAND_R_WAVES = [0, 1, 2, 3].map((i) => (90 + i * 200 + 200 * 0.42) / 1000)
 
 export interface TraceSegment {
   v: string // vertical, viewBox 0 0 64 1000
