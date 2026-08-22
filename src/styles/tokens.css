@@ -1,0 +1,158 @@
+/* Scan only src/. Left to auto-detect, Tailwind treats the prose in
+   CLAUDE.md and docs/ as class candidates and emits the very shadow,
+   blur, and gradient utilities this build bans. */
+@import "tailwindcss" source(none);
+@source "../";
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/Fraunces-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/SpaceGrotesk-Variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: oklch(0.97 0.008 80);          /* paper */
+  --bg-raised: oklch(0.99 0.006 80);
+  --bg-well: oklch(0.955 0.015 25);    /* faint ECG-paper pink, section wells only */
+  --border: oklch(0.88 0.012 60);
+  --border-strong: oklch(0.74 0.015 60);
+  --ink: oklch(0.20 0.01 40);
+  --ink-secondary: oklch(0.44 0.012 40);
+  --ink-faint: oklch(0.60 0.01 40);
+  --accent: oklch(0.60 0.21 30);       /* arterial red — trace, links, focus */
+  --accent-ink: oklch(0.985 0.005 80);
+  /* Accent is a graphic colour: 4.0:1 on paper, fine for the trace and focus
+     rings, short of 4.5:1 wherever it carries text. This is the same red
+     darkened to clear AA as a text and button fill (5.6:1 / 5.8:1). */
+  --accent-deep: oklch(0.52 0.19 30);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-base: 450ms;
+  --dur-slow: 900ms;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-well: var(--bg-well);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-faint: var(--ink-faint);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-ink: var(--accent-ink);
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-sans: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Consolas", monospace;
+  --ease-out: var(--ease-out);
+  --default-transition-duration: var(--dur-fast);
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Display serif for chapter headlines and the hero only */
+.font-display-head {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 90;
+  font-weight: 540;
+  letter-spacing: -0.015em;
+}
+
+/* Oversized outlined chapter numeral, sits behind the headline */
+.ghost-numeral {
+  position: absolute;
+  top: 2.5rem;
+  left: -0.04em;
+  z-index: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 144;
+  font-weight: 500;
+  font-size: clamp(6.5rem, 16vw, 13rem);
+  line-height: 0.85;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border);
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .ghost-numeral {
+    top: 4.5rem;
+  }
+}
+
+/* Footer wordmark, same outlined treatment */
+.wordmark {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 144;
+  font-weight: 600;
+  font-size: clamp(5rem, 16vw, 12rem);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--border-strong);
+  user-select: none;
+}
+
+/* ECG chart-paper grid — inside credential wells only.
+   4px minor / 20px major lines, ~6% opacity. */
+.ecg-well {
+  background-color: var(--bg-well);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M4 0v20M8 0v20M12 0v20M16 0v20M0 4h20M0 8h20M0 12h20M0 16h20' stroke='%23c8452a' stroke-opacity='0.06' stroke-width='1'/%3E%3Cpath d='M0.5 0v20M0 0.5h20' stroke='%23c8452a' stroke-opacity='0.11' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 20px 20px;
+}
+
+/* Text links: accent underline, thickens on hover */
+.text-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-deep);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    text-decoration-thickness var(--dur-fast) var(--ease-out);
+}
+
+.text-link:hover {
+  color: var(--accent-deep);
+  text-decoration-thickness: 2px;
+}
