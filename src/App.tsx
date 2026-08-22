@@ -11,6 +11,7 @@ import { Vitals } from './components/Vitals'
 import { Handover } from './components/Handover'
 import { ShiftClock } from './components/ShiftClock'
 import { TriageDesk } from './components/TriageDesk'
+import { BookingDesk } from './components/BookingDesk'
 import { initMotion } from './lib/motion'
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
       <Navbar />
       <ShiftClock />
       <TriageDesk />
+      <BookingDesk />
       <Hero />
 
       <main>

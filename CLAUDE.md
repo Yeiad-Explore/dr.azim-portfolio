@@ -71,10 +71,12 @@ src/
     HeartBand.tsx       // beat 1.5: lazy WebGL mount + static fallback still
     heart/scene.ts      // three.js scene — code-split, never statically imported
     TriageDesk.tsx      // docked assistant; its 999 line is markup, never model output
+    BookingDesk.tsx     // stepped booking form — deliberately not a chat, no model in the loop
   styles/tokens.css
   lib/motion.ts         // Lenis + ScrollTrigger setup, reduced-motion guard
 api/
   chat.ts               // Vercel edge fn: holds the key, unwraps Azure's SSE
+  booking.ts            // Vercel edge fn: n8n proxy + the booking contract + dev mock
   _prompt.ts            // system prompt + the only hotlines the agent may give
 ```
 
