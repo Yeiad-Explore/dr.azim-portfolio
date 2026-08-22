@@ -4,12 +4,7 @@
 // Deliberately model-free: the form is generated from parametric surfaces at
 // runtime, so there is no glTF to fetch, license, or version. It is drawn as
 // contour lines over an opaque paper-coloured shell — a rotating medical
-// engraving, not a shaded organ. Shading would need lights and a gradient-like
-// falloff, both of which fight the flat printed surface the rest of the page keeps.
-//
-// Every surface is built through `grid()` so the lines are true parallels and
-// meridians. three's `wireframe: true` would draw the triangulation instead,
-// which reads as a mesh rather than as a drawn contour.
+// engraving, not a shaded organ.
 
 import {
   BufferAttribute,
@@ -30,6 +25,10 @@ import {
 export interface HeartHandle {
   /** 0–1 scroll progress through the band. Drives rotation. */
   setProgress(p: number): void
+  /** Focus on a specific anatomical landmark */
+  focusLandmark(id: string): void
+  /** Reset user interactive orbit back to scroll-synced mode */
+  resetView(): void
   destroy(): void
 }
 
@@ -40,6 +39,7 @@ export interface HeartOptions {
   reducedMotion: boolean
   lineColor: string
   shellColor: string
+  onLandmarkChange?: (landmarkId: string | null) => void
 }
 
 interface Surface {
@@ -47,13 +47,6 @@ interface Surface {
   lines: BufferGeometry
 }
 
-/**
- * Tessellate a parametric patch and return both the solid shell and the
- * contour lines, off one shared vertex grid.
- *
- * @param stepU draw a meridian every N columns
- * @param stepV draw a parallel every N rows
- */
 function grid(
   nu: number,
   nv: number,
@@ -110,8 +103,6 @@ function grid(
   return { shell, lines }
 }
 
-// Ventricular mass: a sphere drawn down to an apex, broad at the base, with
-// the interventricular groove and a heavier left wall.
 function ventricles(): Surface {
   const v = new Vector3()
   return grid(
@@ -123,9 +114,6 @@ function ventricles(): Surface {
       v.set(Math.sin(a) * Math.cos(u), Math.cos(a), Math.sin(a) * Math.sin(u))
 
       const t = (v.y + 1) / 2 // 1 at base, 0 at apex
-      // Fills out fast and closes cleanly to zero at the apex. A non-zero
-      // constant here leaves a degenerate ring around the pole that renders
-      // as a crumple, so the taper has to actually reach 0.
       const taper = 1.04 * Math.pow(t, 0.55)
 
       v.x *= taper * 1.12
@@ -145,8 +133,6 @@ function ventricles(): Surface {
   )
 }
 
-// A great vessel: a tapered tube swept along a curve, gridded the same way so
-// its rings and seams match the contour language of the ventricles.
 function tube(points: [number, number, number][], r0: number, r1: number, nu: number): Surface {
   const curve = new CatmullRomCurve3(points.map((p) => new Vector3(...p)))
   const frames = curve.computeFrenetFrames(nu, false)
@@ -189,15 +175,24 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
     transparent: true,
     opacity: 0.9,
   })
-  // Opaque and very slightly inset: it writes depth, so contour lines on the
-  // far side are occluded. That reads as solid without a single light.
-  const shellMat = new MeshBasicMaterial({ color: new Color(opts.shellColor), polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })
+  const shellMat = new MeshBasicMaterial({
+    color: new Color(opts.shellColor),
+    polygonOffset: true,
+    polygonOffsetFactor: 1,
+    polygonOffsetUnits: 1,
+  })
+
+  // Accent material for coronary artery branches (LAD & RCA)
+  const coronaryMat = new LineBasicMaterial({
+    color: new Color(opts.lineColor),
+    linewidth: 2,
+    transparent: true,
+    opacity: 1.0,
+  })
 
   const surfaces: Surface[] = [
     ventricles(),
-    // aortic arch — up out of the base, over, then down and *into* the mass.
-    // Ending inside the silhouette means the descending limb is occluded at
-    // every angle instead of stopping in mid air on some of them.
+    // aortic arch
     tube(
       [
         [-0.06, 0.62, 0.02],
@@ -211,7 +206,7 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
       0.15,
       48,
     ),
-    // pulmonary trunk — shorter, forward of the aorta, leaning the other way
+    // pulmonary trunk
     tube(
       [
         [0.34, 0.6, 0.2],
@@ -222,7 +217,7 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
       0.15,
       26,
     ),
-    // superior vena cava — near-vertical, off the right shoulder
+    // superior vena cava
     tube(
       [
         [-0.56, 0.55, -0.12],
@@ -233,19 +228,43 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
       0.13,
       22,
     ),
+    // Left Anterior Descending (LAD) coronary artery path
+    tube(
+      [
+        [0.08, 0.55, 0.42],
+        [-0.04, 0.22, 0.52],
+        [-0.14, -0.25, 0.46],
+        [-0.22, -0.72, 0.28],
+      ],
+      0.042,
+      0.022,
+      24,
+    ),
+    // Right Coronary Artery (RCA)
+    tube(
+      [
+        [-0.26, 0.48, 0.28],
+        [-0.52, 0.25, 0.18],
+        [-0.58, -0.15, -0.08],
+        [-0.42, -0.45, -0.22],
+      ],
+      0.038,
+      0.02,
+      22,
+    ),
   ]
 
   const group = new Group()
   const pulseGroup = new Group()
   group.add(pulseGroup)
 
-  for (const s of surfaces) {
+  for (let i = 0; i < surfaces.length; i++) {
+    const s = surfaces[i]
     pulseGroup.add(new Mesh(s.shell, shellMat))
-    pulseGroup.add(new LineSegments(s.lines, lineMat))
+    pulseGroup.add(new LineSegments(s.lines, i >= 3 ? coronaryMat : lineMat))
   }
 
-  // Presentation: apex toward the viewer's left, tipped forward, sitting a
-  // little low in frame so the arch has room at the top.
+  // Base presentation
   group.rotation.z = -0.14
   group.rotation.x = 0.08
   group.position.y = -0.24
@@ -260,15 +279,12 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
     if (!w || !h || (w === width && h === height)) return
     width = w
     height = h
-    // Capped so a 3x phone doesn't render nine times the pixels for no gain.
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     renderer.setSize(w, h, false)
     camera.aspect = w / h
     camera.updateProjectionMatrix()
   }
 
-  // Systole is fast, diastole is slow — an even sine would read as a throb,
-  // which is the "infinite pulse loop" this project bans on purpose.
   const contraction = (phase: number) => {
     if (phase < 0 || phase > 1) return 0
     if (phase < 0.22) return Math.sin((phase / 0.22) * Math.PI * 0.5)
@@ -279,19 +295,69 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
   let running = true
   let frame = 0
 
+  // Interactive Orbit / Drag state
+  let isDragging = false
+  let isCustomView = false
+  let targetRotY: number | null = null
+  let targetRotX: number | null = null
+  let dragStartX = 0
+  let dragStartY = 0
+  let rotY = 2.15
+  let rotX = 0.08
+
+  const onPointerDown = (e: PointerEvent) => {
+    isDragging = true
+    isCustomView = true
+    targetRotY = null
+    targetRotX = null
+    dragStartX = e.clientX
+    dragStartY = e.clientY
+    canvas.setPointerCapture(e.pointerId)
+  }
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging) return
+    const dx = (e.clientX - dragStartX) * 0.008
+    const dy = (e.clientY - dragStartY) * 0.008
+    dragStartX = e.clientX
+    dragStartY = e.clientY
+    rotY += dx
+    rotX = Math.max(-0.6, Math.min(0.6, rotX + dy))
+  }
+
+  const onPointerUp = (e: PointerEvent) => {
+    isDragging = false
+    try {
+      canvas.releasePointerCapture(e.pointerId)
+    } catch {}
+  }
+
+  canvas.addEventListener('pointerdown', onPointerDown)
+  canvas.addEventListener('pointermove', onPointerMove)
+  canvas.addEventListener('pointerup', onPointerUp)
+  canvas.addEventListener('pointercancel', onPointerUp)
+
   const render = () => {
     resize()
 
-    // ~75° across the whole band, so the rotation belongs to the scroll —
-    // nothing spins on its own while the reader sits still. The window is
-    // picked so the aortic arch stays legible end to end; a full revolution
-    // spends half its time edge-on, where the model reads as stubs.
-    group.rotation.y = 2.15 + progress * Math.PI * 0.42
+    // Base scroll rotation
+    const defaultRotY = 2.15 + progress * Math.PI * 0.42
+    const defaultRotX = 0.08
+
+    if (!isCustomView) {
+      rotY += (defaultRotY - rotY) * 0.1
+      rotX += (defaultRotX - rotX) * 0.1
+    } else if (targetRotY !== null && targetRotX !== null) {
+      rotY += (targetRotY - rotY) * 0.08
+      rotX += (targetRotX - rotX) * 0.08
+    }
+
+    group.rotation.y = rotY
+    group.rotation.x = rotX
 
     let squeeze = 0
     if (!opts.reducedMotion) {
       for (const r of opts.rWaves) {
-        // each contraction occupies the 9% of the band following its R wave
         squeeze = Math.max(squeeze, contraction((progress - r) / 0.09))
       }
     }
@@ -308,7 +374,6 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
   }
 
   if (opts.reducedMotion) {
-    // One frame, at a readable angle, and never again.
     progress = 0.5
     resize()
     render()
@@ -320,15 +385,46 @@ export function mount(canvas: HTMLCanvasElement, opts: HeartOptions): HeartHandl
     setProgress(p) {
       progress = p
     },
+    focusLandmark(id: string) {
+      isCustomView = true
+      if (id === 'LAD') {
+        // Anterior interventricular view
+        targetRotY = 2.45
+        targetRotX = 0.12
+      } else if (id === 'RCA') {
+        // Right lateral / atrioventricular groove
+        targetRotY = 1.15
+        targetRotX = 0.05
+      } else if (id === 'AORTA') {
+        // Superior great vessels view
+        targetRotY = 2.85
+        targetRotX = -0.32
+      } else if (id === 'APEX') {
+        // Inferior apex view
+        targetRotY = 2.2
+        targetRotX = 0.42
+      }
+    },
+    resetView() {
+      isCustomView = false
+      targetRotY = null
+      targetRotX = null
+    },
     destroy() {
       running = false
       cancelAnimationFrame(frame)
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerup', onPointerUp)
+      canvas.removeEventListener('pointercancel', onPointerUp)
+
       for (const s of surfaces) {
         s.shell.dispose()
         s.lines.dispose()
       }
       lineMat.dispose()
       shellMat.dispose()
+      coronaryMat.dispose()
       renderer.dispose()
     },
   }

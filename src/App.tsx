@@ -3,13 +3,15 @@ import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { Chapter } from './components/Chapter'
 import { Competencies } from './components/Competencies'
+import { RhythmStrip } from './components/RhythmStrip'
+import { GoldenHourCase } from './components/GoldenHourCase'
 import { HeartBand } from './components/HeartBand'
 import { PostingRail } from './components/PostingRail'
 import { Vitals } from './components/Vitals'
 import { Handover } from './components/Handover'
 import { ShiftClock } from './components/ShiftClock'
+import { TriageDesk } from './components/TriageDesk'
 import { initMotion } from './lib/motion'
-
 
 function App() {
   useEffect(() => initMotion(), [])
@@ -18,6 +20,7 @@ function App() {
     <>
       <Navbar />
       <ShiftClock />
+      <TriageDesk />
       <Hero />
 
       <main>
@@ -43,6 +46,14 @@ function App() {
 
           <div className="!mt-12">
             <Competencies />
+          </div>
+
+          <div className="!mt-12">
+            <RhythmStrip />
+          </div>
+
+          <div className="!mt-12">
+            <GoldenHourCase />
           </div>
 
           <div className="!mt-12">

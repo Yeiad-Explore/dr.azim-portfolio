@@ -82,6 +82,32 @@ Footer: oversized outlined wordmark "A.A.B" · © 2026 Dr. Abdul Awal Bhuiyan ·
 
 ---
 
+## Assistant — the docked panel
+
+Fixed strings. These are markup, not model output, and must render even when the
+API is down. Changing them changes a safety surface.
+
+Trigger: **ASK** / **CLOSE**
+Panel label: [mono] AUTOMATED ASSISTANT
+Standing banner: [mono] EMERGENCY? CALL 999 NOW — DO NOT WAIT FOR A REPLY HERE
+
+Opening line: I am an automated assistant on Dr. Bhuiyan's site, not a doctor and
+not him. I cannot diagnose or tell you how serious something is. If someone is in
+danger now, call 999. Otherwise, ask me what to do while help is on the way, or
+about his practice.
+
+Failure line: The assistant is unavailable. If this is an emergency, call 999 now
+or go to your nearest emergency department.
+
+Footer: [mono] Automated. Not medical advice, not a diagnosis, and not monitored
+by Dr. Bhuiyan.
+
+Hotlines the agent may give live in `api/_prompt.ts` → `HOTLINES`. Verify them
+against the current published numbers before launch; a stale emergency number is
+worse than none.
+
+---
+
 ## Off the page (kept on file, not rendered)
 
 School history, internship, short courses, exams in preparation, and referee names/numbers live in the source CV. They are not published on this site.

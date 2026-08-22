@@ -27,15 +27,18 @@ export function Navbar() {
           </div>
 
           <nav aria-label="Clinical sections" className="flex items-center gap-3 sm:gap-5 font-mono text-[0.75rem] tracking-[0.04em]">
+            {/* At 360px the full row overruns the header. The page is one
+                continuous scroll, so the two in-page anchors drop and the
+                Handover CTA — the only one that is a destination — stays. */}
             <a
               href="#practice"
-              className="text-ink-secondary transition-colors duration-[160ms] hover:text-ink"
+              className="hidden text-ink-secondary transition-colors duration-[160ms] hover:text-ink sm:inline"
             >
               Practice
             </a>
             <a
               href="#chart"
-              className="text-ink-secondary transition-colors duration-[160ms] hover:text-ink"
+              className="hidden text-ink-secondary transition-colors duration-[160ms] hover:text-ink sm:inline"
             >
               Credentials
             </a>

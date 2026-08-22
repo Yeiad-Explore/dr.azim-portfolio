@@ -27,3 +27,11 @@ dist-ssr
 .claude
 .agents
 
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel

@@ -12,6 +12,8 @@ One page. One continuous scroll. The visitor moves through a short emergency shi
 - Tailwind CSS v4 — all tokens as CSS custom properties in `:root`, consumed via `@theme`
 - GSAP 3 + ScrollTrigger for all scroll-bound motion; Lenis for smooth scroll, wired into ScrollTrigger's ticker
 - Three.js for exactly one WebGL set-piece: the anatomical heart band between *Practice* and *Chart*. Imported **dynamically** behind an IntersectionObserver so it contributes 0KB to first paint; tree-shaken core only, no `examples/jsm` grab-bag. This supersedes the earlier blanket 3D ban (owner decision, 2026-08-22) and licenses no other 3D anywhere on the page
+- One serverless route, `api/chat.ts` on Vercel, backing the assistant. It exists only to hold the
+  Azure OpenAI key server-side; the site is otherwise still a static build. No database, no session store
 - Fonts self-hosted via `@font-face`, `font-display: swap`: display serif (Fraunces variable), body grotesk (Space Grotesk variable), mono (IBM Plex Mono, 400 only)
 
 ## Design tokens (define once in `src/styles/tokens.css`)
@@ -45,7 +47,12 @@ Dark mode: not in scope. One theme, done excellently.
 6. **`prefers-reduced-motion`:** trace renders fully drawn, clock shows final values, reveals become plain fades or nothing. Implement from the first animation commit, not as a patch.
 7. **Accessibility:** semantic landmarks, h1→h2 order matching chapters, visible 2px accent focus outlines, contrast ≥ 4.5:1 body, keyboard reaches everything. The timestamps are `aria-hidden` (decorative); real dates live in visible text.
 8. **Performance:** ≤ 200KB gz JS at first paint — the Three.js chunk is lazy and sits outside that figure, but must itself stay ≤ 160KB gz — zero CLS from animation or imagery (pre-reserve trace column width and every image's aspect ratio), 60fps scrub (the trace path is split per-section so dashoffset interpolation stays cheap).
-9. Mobile 360px first-class: trace moves from left gutter to a thin top-of-section rule variant; chapters stack; timestamps stay.
+9. **The assistant is a safety surface, not a feature.** The 999 line is markup and must render before,
+   during, and after any API failure. `api/_prompt.ts` must never be imported from `src/`. Every number the
+   agent may speak lives in `HOTLINES` in that file — the model may not produce one that is not there. It
+   never diagnoses, never grades severity, never tells anyone to wait. Read the README's Safety design
+   section before touching any of it.
+10. Mobile 360px first-class: trace moves from left gutter to a thin top-of-section rule variant; chapters stack; timestamps stay.
 
 ## Component map
 
@@ -63,8 +70,12 @@ src/
     Portrait.tsx        // hero portrait, warm-mono treated, aspect-ratio reserved
     HeartBand.tsx       // beat 1.5: lazy WebGL mount + static fallback still
     heart/scene.ts      // three.js scene — code-split, never statically imported
+    TriageDesk.tsx      // docked assistant; its 999 line is markup, never model output
   styles/tokens.css
   lib/motion.ts         // Lenis + ScrollTrigger setup, reduced-motion guard
+api/
+  chat.ts               // Vercel edge fn: holds the key, unwraps Azure's SSE
+  _prompt.ts            // system prompt + the only hotlines the agent may give
 ```
 
 ## Definition of done
