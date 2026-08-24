@@ -1,21 +1,21 @@
-import { useEffect } from 'react'
-import { Navbar } from './components/Navbar'
-import { Hero } from './components/Hero'
-import { Chapter } from './components/Chapter'
-import { Competencies } from './components/Competencies'
-import { RhythmStrip } from './components/RhythmStrip'
-import { GoldenHourCase } from './components/GoldenHourCase'
-import { ResuscitationBand } from './components/ResuscitationBand'
-import { PostingRail } from './components/PostingRail'
-import { Vitals } from './components/Vitals'
-import { Handover } from './components/Handover'
-import { ShiftClock } from './components/ShiftClock'
-import { TriageDesk } from './components/TriageDesk'
-import { BookingDesk } from './components/BookingDesk'
-import { initMotion } from './lib/motion'
+import { useEffect } from "react";
+import { Navbar } from "./components/Navbar";
+import { Hero } from "./components/Hero";
+import { Chapter } from "./components/Chapter";
+import { Competencies } from "./components/Competencies";
+import { RhythmStrip } from "./components/RhythmStrip";
+import { GoldenHourCase } from "./components/GoldenHourCase";
+import { ResuscitationBand } from "./components/ResuscitationBand";
+import { PostingRail } from "./components/PostingRail";
+import { Vitals } from "./components/Vitals";
+import { Handover } from "./components/Handover";
+import { ShiftClock } from "./components/ShiftClock";
+import { TriageDesk } from "./components/TriageDesk";
+import { BookingDesk } from "./components/BookingDesk";
+import { initMotion } from "./lib/motion";
 
 function App() {
-  useEffect(() => initMotion(), [])
+  useEffect(() => initMotion(), []);
 
   return (
     <>
@@ -38,11 +38,13 @@ function App() {
           <div className="max-w-[65ch] space-y-4">
             <p>
               Cases at Labaid Cardiac Hospital arrive mid-crisis, not
-              mid-checkup. Dr. Abdul Awal Bhuiyan manages critical medical emergencies,
-              trauma, bedside resuscitation, and immediate intensive care.
+              mid-checkup. Dr. Abdul Awal Bhuiyan manages critical medical
+              emergencies, trauma, bedside resuscitation, and immediate
+              intensive care.
             </p>
             <p>
-              Trained across high-volume emergency floors in Dhaka, providing rapid clinical decision-making during the critical golden hour.
+              Trained across high-volume emergency floors in Dhaka, providing
+              rapid clinical decision-making during the critical golden hour.
             </p>
           </div>
 
@@ -65,7 +67,15 @@ function App() {
 
         <ResuscitationBand />
 
-        <Chapter index={2} beatIndex={3} id="chart" time="22:40" beat="CHART" title="Registration &amp; Registry." wide>
+        <Chapter
+          index={2}
+          beatIndex={3}
+          id="chart"
+          time="22:40"
+          beat="CHART"
+          title="Registration &amp; Registry."
+          wide
+        >
           <Vitals />
         </Chapter>
 
@@ -89,9 +99,12 @@ function App() {
           </div>
           <div className="mt-10 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-baseline sm:justify-between">
             <div>
-              <p className="font-medium text-ink">Dr. Abdul Awal Bhuiyan, MBBS</p>
+              <p className="font-medium text-ink">
+                Dr. Abdul Awal Bhuiyan, MBBS
+              </p>
               <p className="font-mono text-xs text-ink-secondary">
-                BMDC Reg. A-119798 · Emergency Medical Officer, Labaid Cardiac Hospital
+                BMDC Reg. A-119798 · Emergency Medical Officer, Labaid Cardiac
+                Hospital
               </p>
             </div>
             <p
@@ -104,7 +117,7 @@ function App() {
         </div>
       </footer>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

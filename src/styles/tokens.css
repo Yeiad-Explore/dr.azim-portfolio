@@ -29,15 +29,17 @@
 }
 
 :root {
-  --bg: oklch(0.97 0.008 80);          /* paper */
+  --bg: oklch(0.97 0.008 80); /* paper */
   --bg-raised: oklch(0.99 0.006 80);
-  --bg-well: oklch(0.955 0.015 25);    /* faint ECG-paper pink, section wells only */
+  --bg-well: oklch(
+    0.955 0.015 25
+  ); /* faint ECG-paper pink, section wells only */
   --border: oklch(0.88 0.012 60);
   --border-strong: oklch(0.74 0.015 60);
-  --ink: oklch(0.20 0.01 40);
+  --ink: oklch(0.2 0.01 40);
   --ink-secondary: oklch(0.44 0.012 40);
-  --ink-faint: oklch(0.60 0.01 40);
-  --accent: oklch(0.60 0.21 30);       /* arterial red — trace, links, focus */
+  --ink-faint: oklch(0.6 0.01 40);
+  --accent: oklch(0.6 0.21 30); /* arterial red — trace, links, focus */
   --accent-ink: oklch(0.985 0.005 80);
   /* Accent is a graphic colour: 4.0:1 on paper, fine for the trace and focus
      rings, short of 4.5:1 wherever it carries text. This is the same red
@@ -164,7 +166,7 @@ button:focus-visible,
    flips on its own. Values re-checked for AA against the ink bg.
    ───────────────────────────────────────────────────────────── */
 .band-ink {
-  --bg: oklch(0.20 0.01 40);
+  --bg: oklch(0.2 0.01 40);
   --bg-raised: oklch(0.245 0.012 40);
   --bg-well: oklch(0.235 0.018 30);
   --border: oklch(0.32 0.012 40);
@@ -187,7 +189,8 @@ button:focus-visible,
   height: auto;
   aspect-ratio: 1122 / 1402;
   object-fit: cover;
-  filter: grayscale(1) sepia(0.42) contrast(1.08) brightness(1.02) saturate(1.15);
+  filter: grayscale(1) sepia(0.42) contrast(1.08) brightness(1.02)
+    saturate(1.15);
 }
 
 /* Competency index numerals — the ghost-numeral treatment, list scale */
