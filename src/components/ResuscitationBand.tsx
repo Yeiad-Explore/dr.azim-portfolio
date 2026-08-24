@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EcgTrace } from './EcgTrace'
-import { HEART_BAND_R_WAVES } from '../lib/ecg'
-import type { HeartHandle } from './heart/scene'
+import { RESUSCITATION_BAND_R_WAVES } from '../lib/ecg'
+import type { HeartHandle, SystemId } from './torso/scene'
+
+// Beat 1.5: the WebGL set-piece, and its resolution of the trace. Deliberately
+// the whole primary survey — airway, breathing, circulation, neuro, the chest
+// wall — not the heart alone. A heart-only set-piece reads as a cardiology
+// subspecialty; the sequence itself is what an emergency physician actually
+// runs. See CLAUDE.md's 2026-08-22 amendment on this.
 
 function resolveColor(value: string, fallback: string) {
   try {
@@ -20,50 +26,60 @@ function resolveColor(value: string, fallback: string) {
   }
 }
 
-interface LandmarkInfo {
-  id: string
-  name: string
+interface SystemInfo {
+  id: SystemId
+  label: string
   tag: string
   desc: string
   relevance: string
 }
 
-const LANDMARKS: Record<string, LandmarkInfo> = {
-  LAD: {
-    id: 'LAD',
-    name: 'Left Anterior Descending (LAD)',
-    tag: 'ANTERIOR WALL PERFUSION',
-    desc: 'Passes down the anterior interventricular groove towards the apex.',
-    relevance: 'Acute occlusion causes Anterior STEMI ("The Widowmaker"). Highest risk for cardiogenic shock and malignant ventricular arrhythmias.',
+// Standard primary-survey order (ABCDE). Content is general emergency-medicine
+// knowledge, not a claim about a specific case — nothing here is a fact about
+// Dr. Bhuiyan beyond "this is the sequence the role runs."
+const SYSTEMS: SystemInfo[] = [
+  {
+    id: 'airway',
+    label: 'Airway',
+    tag: 'FIRST PRIORITY',
+    desc: 'The first thing checked, and the first thing protected.',
+    relevance: 'A blocked airway kills faster than anything else in the bay — nothing further matters until air can reach the lungs.',
   },
-  RCA: {
-    id: 'RCA',
-    name: 'Right Coronary Artery (RCA)',
-    tag: 'INFERIOR & RV PERFUSION',
-    desc: 'Runs in the right coronary sulcus, perfusing the right ventricle, SA node, and AV node.',
-    relevance: 'Occlusion causes Inferior STEMI (Leads II, III, aVF) frequently complicated by complete heart block and bradyarrhythmias.',
+  {
+    id: 'breathing',
+    label: 'Breathing',
+    tag: 'OXYGENATION & VENTILATION',
+    desc: 'The lungs move air; the job is knowing instantly when they stop moving it well.',
+    relevance: 'Chest rise, breath sounds, and oxygen saturation are read within seconds of arrival, before any monitor confirms it.',
   },
-  AORTA: {
-    id: 'AORTA',
-    name: 'Ascending Aorta & Root',
-    tag: 'GREAT ARTERIAL TRUNK',
-    desc: 'Origin of systemic circulation and coronary artery ostia at the aortic sinuses.',
-    relevance: 'Site of critical acute aortic dissection (Stanford Type A), aortic valve rupture, and primary cannulation in resuscitation.',
+  {
+    id: 'circulation',
+    label: 'Circulation',
+    tag: 'PERFUSION & PULSE',
+    desc: 'The heart and vessels that carry oxygen to everything else.',
+    relevance: 'In arrest or shock, restoring a pulse and pressure is the immediate task — every other system depends on it.',
   },
-  APEX: {
-    id: 'APEX',
-    name: 'Left Ventricular Apex',
-    tag: 'APICAL MYOCARDIUM',
-    desc: 'Formed entirely by the left ventricle at the 5th left intercostal space.',
-    relevance: 'Point of maximal impulse (PMI); sensitive to apical ballooning (Takotsubo) and ventricular aneurysm formation post-infarction.',
+  {
+    id: 'neuro',
+    label: 'Neuro',
+    tag: 'CONSCIOUSNESS & SPINE',
+    desc: 'A quick read on the brain, and the spinal cord it depends on.',
+    relevance: 'Level of consciousness is checked in seconds; the neck is protected until injury is ruled out.',
   },
-}
+  {
+    id: 'trauma',
+    label: 'Chest Wall',
+    tag: 'EXPOSURE',
+    desc: 'What protects everything inside it, and what can just as easily be the injury itself.',
+    relevance: 'A collapsed lung or bleeding inside the chest is found and treated at the bedside, not the imaging suite.',
+  },
+]
 
-export function HeartBand() {
+export function ResuscitationBand() {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [live, setLive] = useState(false)
-  const [selectedLandmark, setSelectedLandmark] = useState<string | null>('LAD')
+  const [selected, setSelected] = useState<SystemId | null>(null)
   const handleRef = useRef<HeartHandle | null>(null)
 
   useEffect(() => {
@@ -75,19 +91,21 @@ export function HeartBand() {
     let trigger: ScrollTrigger | null = null
     let cancelled = false
 
+    // Nothing is fetched until the band is within a screen of the viewport,
+    // which keeps three.js out of everything the first paint has to do.
     const io = new IntersectionObserver(
       (entries) => {
         if (!entries.some((e) => e.isIntersecting)) return
         io.disconnect()
 
-        import('./heart/scene')
+        import('./torso/scene')
           .then(({ mount }) => {
             if (cancelled) return
             const css = getComputedStyle(document.documentElement)
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
             handle = mount(canvas, {
-              rWaves: HEART_BAND_R_WAVES,
+              rWaves: RESUSCITATION_BAND_R_WAVES,
               reducedMotion,
               lineColor: resolveColor(css.getPropertyValue('--accent').trim(), '#c2452c'),
               shellColor: resolveColor(css.getPropertyValue('--bg').trim(), '#f7f4ee'),
@@ -103,7 +121,9 @@ export function HeartBand() {
               onUpdate: (self) => handle?.setProgress(self.progress),
             })
           })
-          .catch(() => {})
+          .catch(() => {
+            // No WebGL, or the chunk failed to load. The still stays up.
+          })
       },
       { rootMargin: '100% 0px' },
     )
@@ -119,22 +139,18 @@ export function HeartBand() {
     }
   }, [])
 
-  const handleSelect = (id: string) => {
-    setSelectedLandmark(id)
-    handleRef.current?.focusLandmark(id)
+  const select = (id: SystemId) => {
+    const next = selected === id ? null : id
+    setSelected(next)
+    handleRef.current?.focusLandmark(next)
   }
 
-  const handleReset = () => {
-    setSelectedLandmark(null)
-    handleRef.current?.resetView()
-  }
-
-  const landmark = selectedLandmark ? LANDMARKS[selectedLandmark] : null
+  const system = selected ? SYSTEMS.find((s) => s.id === selected) : null
 
   return (
     <section
       ref={sectionRef}
-      aria-labelledby="perfusion-title"
+      aria-labelledby="resuscitation-title"
       data-beat={2}
       data-time="22:26"
       className="relative border-t border-border"
@@ -152,62 +168,57 @@ export function HeartBand() {
           <div data-reveal className="space-y-6">
             <div>
               <p className="mb-4 font-mono text-[0.8125rem] tracking-[0.2em] text-ink-secondary">
-                <span aria-hidden="true">22:26 - </span>CIRCULATION
+                <span aria-hidden="true">22:26 - </span>RESUSCITATION
               </p>
               <h2
-                id="perfusion-title"
+                id="resuscitation-title"
                 className="font-display-head text-[clamp(1.9rem,3.6vw,2.8rem)] leading-[1.08] text-ink"
               >
-                The organ the whole shift is organized around.
+                The first minutes decide everything.
               </h2>
             </div>
 
             <p className="max-w-[48ch] text-[1.0625rem] leading-[1.7] text-ink-secondary">
-              Every beat below the trace is a contraction. In acute myocardial infarction or arrest, the emergency physician's job is to buy back the coronary perfusion the patient can no longer sustain.
+              In the emergency department, the priority is simple: recognize
+              what is failing, stabilize it, and buy the patient time. Airway,
+              breathing, circulation, neuro status, and exposure — each is
+              checked, in order, before anything else.
             </p>
 
-            {/* Interactive Coronary & Landmark Buttons */}
             <div className="rounded-[4px] border border-border bg-bg-raised p-4">
               <span className="mb-3 block font-mono text-[0.6875rem] tracking-[0.14em] text-ink-faint">
-                INTERACTIVE CORONARY ARTERY &amp; ANATOMICAL FOCUS
+                THE PRIMARY SURVEY
               </span>
               <div className="flex flex-wrap gap-2">
-                {Object.values(LANDMARKS).map((lm) => (
+                {SYSTEMS.map((s) => (
                   <button
-                    key={lm.id}
+                    key={s.id}
                     type="button"
-                    onClick={() => handleSelect(lm.id)}
-                    className={`rounded-[4px] px-2.5 py-1 font-mono text-[0.75rem] transition-all duration-[160ms] ${
-                      selectedLandmark === lm.id
+                    onClick={() => select(s.id)}
+                    aria-pressed={selected === s.id}
+                    className={`rounded-[4px] px-2.5 py-1 font-mono text-[0.75rem] transition-colors duration-[160ms] ${
+                      selected === s.id
                         ? 'bg-accent-deep text-accent-ink font-semibold'
                         : 'border border-border bg-bg text-ink-secondary hover:border-border-strong hover:text-ink'
                     }`}
                   >
-                    {lm.id}
+                    {s.label}
                   </button>
                 ))}
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="rounded-[4px] border border-border bg-bg px-2.5 py-1 font-mono text-[0.75rem] text-ink-faint transition-colors duration-[160ms] hover:border-accent hover:text-accent-deep"
-                >
-                  Scroll Sync
-                </button>
               </div>
 
-              {landmark && (
+              {system && (
                 <div className="mt-4 border-t border-border pt-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium text-ink text-sm">{landmark.name}</span>
-                    <span className="font-mono text-[0.625rem] text-accent-deep font-semibold">
-                      {landmark.tag}
+                    <span className="text-sm font-medium text-ink">{system.label}</span>
+                    <span className="font-mono text-[0.625rem] font-semibold text-accent-deep">
+                      {system.tag}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs leading-relaxed text-ink-secondary">
-                    {landmark.desc}
-                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-ink-secondary">{system.desc}</p>
                   <p className="mt-2 rounded bg-bg-well p-2 text-xs font-medium text-ink">
-                    <span className="font-semibold text-accent-deep">ER Significance:</span> {landmark.relevance}
+                    <span className="font-semibold text-accent-deep">Why it matters here:</span>{' '}
+                    {system.relevance}
                   </p>
                 </div>
               )}
@@ -215,9 +226,11 @@ export function HeartBand() {
           </div>
 
           <figure data-reveal className="mt-10 lg:mt-0">
-            <div className="relative aspect-square w-full max-w-[28rem] rounded-[6px] border border-border bg-bg-raised shadow-inner">
+            <div className="relative aspect-square w-full max-w-[28rem] border border-border bg-bg-raised">
+              {/* Rendered still. Stays put when WebGL is unavailable, the
+                  chunk fails, or JS never runs — the box is never empty. */}
               <img
-                src="/img/heart-still.webp"
+                src="/img/torso-still.webp"
                 alt=""
                 aria-hidden="true"
                 width={832}
@@ -227,18 +240,10 @@ export function HeartBand() {
                   live ? 'opacity-0' : 'opacity-100'
                 }`}
               />
-              <canvas
-                ref={canvasRef}
-                aria-hidden="true"
-                className="absolute inset-0 h-full w-full cursor-grab active:cursor-grabbing"
-              />
-
-              <div className="pointer-events-none absolute bottom-3 left-3 rounded bg-bg/80 px-2 py-1 font-mono text-[0.625rem] text-ink-secondary">
-                Drag to rotate 3D anatomy
-              </div>
+              <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
             </div>
             <figcaption className="mt-3 max-w-[28rem] font-mono text-[0.625rem] tracking-[0.14em] text-ink-faint">
-              PARAMETRIC CORONARY &amp; CARDIAC SCHEMATIC · NOT DIAGNOSTIC IMAGING
+              PARAMETRIC ANATOMICAL SCHEMATIC · NOT DIAGNOSTIC IMAGING
             </figcaption>
           </figure>
         </div>

@@ -36,17 +36,27 @@ Two and a half years at Unity Aid Hospital first. Labaid Cardiac Hospital from S
 
 ---
 
-## 1.5 · Circulation — 22:26 · The heart band
+## 1.5 · Resuscitation — 22:26 · The WebGL band
 
 No chapter numeral — this beat carries the WebGL set-piece, not a chapter.
 
-Chapter label: CIRCULATION
+He is an emergency physician, not a cardiologist — this band's subject is
+deliberately the whole primary survey, not the heart alone. A heart-only
+set-piece reads as a cardiology subspecialty.
 
-**The organ the whole shift is organized around.**
+Chapter label: RESUSCITATION
 
-Every beat below the trace is a contraction. In an arrest, the job is to buy back the ones the patient can no longer make.
+**The first minutes decide everything.**
 
-[mono] SCHEMATIC · NOT A DIAGNOSTIC IMAGE
+In the emergency department, the priority is simple: recognize what is failing, stabilize it, and buy the patient time. Airway, breathing, circulation, neuro status, and exposure — each is checked, in order, before anything else.
+
+The interactive model is a torso with five selectable systems (the primary
+survey, ABCDE): Airway, Breathing, Circulation, Neuro, Chest Wall. Each
+carries a short tag and two lines of general emergency-medicine knowledge —
+not a claim about a specific case, and nothing invented about him beyond "this
+is the sequence the role runs."
+
+[mono] PARAMETRIC ANATOMICAL SCHEMATIC · NOT DIAGNOSTIC IMAGING
 
 The caption is not decoration. The model is a generated schematic, not imaging, and a physician's site must not imply otherwise.
 

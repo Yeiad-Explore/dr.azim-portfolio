@@ -11,7 +11,7 @@ One page. One continuous scroll. The visitor moves through a short emergency shi
 - Vite + React 19, TypeScript
 - Tailwind CSS v4 — all tokens as CSS custom properties in `:root`, consumed via `@theme`
 - GSAP 3 + ScrollTrigger for all scroll-bound motion; Lenis for smooth scroll, wired into ScrollTrigger's ticker
-- Three.js for exactly one WebGL set-piece: the anatomical heart band between *Practice* and *Chart*. Imported **dynamically** behind an IntersectionObserver so it contributes 0KB to first paint; tree-shaken core only, no `examples/jsm` grab-bag. This supersedes the earlier blanket 3D ban (owner decision, 2026-08-22) and licenses no other 3D anywhere on the page
+- Three.js for exactly one WebGL set-piece: the resuscitation band between *Practice* and *Chart* — a torso model covering the primary survey (airway, breathing, circulation, neuro, chest wall), not a heart alone. Imported **dynamically** behind an IntersectionObserver so it contributes 0KB to first paint; tree-shaken core only, no `examples/jsm` grab-bag. This supersedes the earlier blanket 3D ban (owner decision, 2026-08-22) and licenses no other 3D anywhere on the page. Amended 2026-08-22: the set-piece was originally heart-only; a heart-only subject reads as a cardiology set-piece for a physician whose specialty is emergency medicine, so it was rebuilt around the whole primary survey
 - One serverless route, `api/chat.ts` on Vercel, backing the assistant. It exists only to hold the
   Azure OpenAI key server-side; the site is otherwise still a static build. No database, no session store
 - Fonts self-hosted via `@font-face`, `font-display: swap`: display serif (Fraunces variable), body grotesk (Space Grotesk variable), mono (IBM Plex Mono, 400 only)
@@ -40,7 +40,7 @@ Dark mode: not in scope. One theme, done excellently.
 ## Hard rules (non-negotiable)
 
 1. **Banned everywhere:** box-shadows/drop-shadows (focus rings excepted), backdrop-blur, any gradient, emoji, icon-grid "feature" rows, hover:scale, infinite float/pulse loops, blob or dotted-grid backgrounds, pill gradient buttons, border-radius > 8px, lorem ipsum, and the words "passionate", "dedicated", "seamless", "journey" (as filler), "empower".
-2. **One signature, one satellite.** The ECG trace is the signature. The WebGL heart is permitted as its resolution, not its rival: it lives in its own beat, is driven by the same scroll progress as the QRS spike, and renders as contour lines in ink and accent — never a photoreal glossy organ. Nothing else animated joins them.
+2. **One signature, one satellite.** The ECG trace is the signature. The WebGL torso is permitted as its resolution, not its rival: it lives in its own beat, is driven by the same scroll progress as the QRS spike, and renders as contour lines in ink and accent — never a photoreal glossy organ, and never the heart alone. Nothing else animated joins them.
 3. **Copy comes from `docs/CONTENT.md` verbatim.** Do not invent facts, do not embellish medical claims, do not add testimonials. Real registration numbers, real dates only.
 4. **Static first.** Build the entire page with zero animation and get sign-off on the frozen layout before any GSAP import. The page must read as excellent editorial longform with JS disabled.
 5. **Motion budget:** animate only `transform`, `opacity`, `stroke-dashoffset`. One load sequence (hero). Scroll reveals travel 8–24px, fire once, ease-out only. The trace and timestamp clock are the only scrubbed elements.
@@ -68,8 +68,8 @@ src/
     Vitals.tsx          // registration flowsheet (chart-paper well)
     Handover.tsx        // contact, on the inverted ink band
     Portrait.tsx        // hero portrait, warm-mono treated, aspect-ratio reserved
-    HeartBand.tsx       // beat 1.5: lazy WebGL mount + static fallback still
-    heart/scene.ts      // three.js scene — code-split, never statically imported
+    ResuscitationBand.tsx // beat 1.5: lazy WebGL mount + static fallback still, primary-survey subject
+    torso/scene.ts      // three.js scene — code-split, never statically imported
     TriageDesk.tsx      // docked assistant; its 999 line is markup, never model output
     BookingDesk.tsx     // stepped booking form — deliberately not a chat, no model in the loop
   styles/tokens.css

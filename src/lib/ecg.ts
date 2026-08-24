@@ -101,8 +101,9 @@ function serialize(cmds: Cmd[], map: (along: number, deflect: number) => [number
 }
 
 // R-wave positions (0–1 along section 2), derived from the same numbers that
-// draw it, so the WebGL heart contracts on exactly the spikes you can see.
-export const HEART_BAND_R_WAVES = [0, 1, 2, 3].map((i) => (90 + i * 200 + 200 * 0.42) / 1000)
+// draw it, so the embedded heart in the resuscitation band contracts on
+// exactly the spikes you can see.
+export const RESUSCITATION_BAND_R_WAVES = [0, 1, 2, 3].map((i) => (90 + i * 200 + 200 * 0.42) / 1000)
 
 export interface TraceSegment {
   v: string // vertical, viewBox 0 0 64 1000

@@ -5,7 +5,7 @@ import { Chapter } from './components/Chapter'
 import { Competencies } from './components/Competencies'
 import { RhythmStrip } from './components/RhythmStrip'
 import { GoldenHourCase } from './components/GoldenHourCase'
-import { HeartBand } from './components/HeartBand'
+import { ResuscitationBand } from './components/ResuscitationBand'
 import { PostingRail } from './components/PostingRail'
 import { Vitals } from './components/Vitals'
 import { Handover } from './components/Handover'
@@ -63,7 +63,7 @@ function App() {
           </div>
         </Chapter>
 
-        <HeartBand />
+        <ResuscitationBand />
 
         <Chapter index={2} beatIndex={3} id="chart" time="22:40" beat="CHART" title="Registration &amp; Registry." wide>
           <Vitals />
